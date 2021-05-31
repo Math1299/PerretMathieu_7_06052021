@@ -54,8 +54,8 @@ exports.update = (req, res, next) => {
     let lastName = req.body.lastName;
     let sqlInserts = [firstName, lastName, email, userId];
     user.update(sqlInserts)
-        .then((tutu) => {
-            res.status(200).json(JSON.stringify(tutu));
+        .then((pb) => {
+            res.status(200).json(JSON.stringify(pb));
         })
         .catch((error) => {
             console.log(error);
