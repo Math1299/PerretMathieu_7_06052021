@@ -1,7 +1,8 @@
-const http = require("http");
-require("dotenv").config({ path: "./config/.env" });
-const app = require("./app");
+const http = require("http"); //import du package http
+require("dotenv").config({ path: "./config/.env" }); //indique le chemin pour la variable d'environnement
+const app = require("./app"); //import de app pour l'utiliser sur le server
 
+//retourner un port valide
 const normalizePort = (val) => {
     const port = parseInt(val, 10);
 
@@ -13,9 +14,10 @@ const normalizePort = (val) => {
     }
     return false;
 };
+//on défini le port que l'on va utiliser
 const port = normalizePort(process.env.DB_PORT || "3000");
 app.set("port", port);
-
+//on gère les erreurs
 const errorHandler = (error) => {
     if (error.syscall !== "listen") {
         throw error;
@@ -35,7 +37,7 @@ const errorHandler = (error) => {
             throw error;
     }
 };
-
+//création du serveur
 const server = http.createServer(app);
 
 server.on("error", errorHandler);
@@ -44,5 +46,5 @@ server.on("listening", () => {
     const bind = typeof address === "string" ? "pipe " + address : "port " + port;
     console.log("Listening on " + bind);
 });
-
+//le serveur écoute le port que nous avons défini
 server.listen(port);
