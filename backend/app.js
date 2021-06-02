@@ -13,6 +13,7 @@ const limiter = ratelimit({
 //importation de nos routers
 const userRoutes = require("./routes/users");
 const postRoutes = require("./routes/posts");
+const moderatorRoutes = require("./routes/moderator");
 
 const app = express();
 app.use(helmet());
@@ -40,6 +41,7 @@ app.use(limiter);
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/user", userRoutes); //import des routes utilisateurs depuis le controller user.js
 app.use("/api/post", postRoutes); //import des routes posts depuis le controller posts.js
+app.use("/api/moderator", moderatorRoutes); // import des routes moderator depuis le controller moderator.js
 
 //export de l'app
 module.exports = app;

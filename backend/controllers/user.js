@@ -9,6 +9,7 @@ let user = new User();
 //middleware pour l'enregistrement de nouveaux utilisateurs et hashage du mot de passe
 exports.signup = (req, res, next) => {
     console.log(req.body); //visualisation des données entrées
+
     let lastName = req.body.lastName;
     let firstName = req.body.firstName;
     let email = req.body.email;
@@ -31,12 +32,14 @@ exports.signup = (req, res, next) => {
 
 //middleware pour connecter les utilisateurs existants
 exports.login = (req, res, next) => {
+    console.log(req.body); //visualisation des données entrées
     let email = req.body.email; //on récupère email et mdp afin de vérfier la correspondance
     let password = req.body.password;
     let sqlInserts = [email];
     user.login(sqlInserts, password)
         .then((userIdAndToken) => {
             res.status(200).json(JSON.stringify(userIdAndToken));
+            console.log(userIdAndToken);
         })
         .catch((error) => {
             console.log(error);
@@ -53,6 +56,7 @@ exports.update = (req, res, next) => {
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let sqlInserts = [firstName, lastName, email, userId];
+    console.log(sqlInserts);
     user.update(sqlInserts)
         .then((pb) => {
             res.status(200).json(JSON.stringify(pb));

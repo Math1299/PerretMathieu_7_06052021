@@ -4,11 +4,13 @@ const mysql = require("mysql");
 class Posts {
     constructor() {}
 
+    //*************************************     POSTS     ***************************************************************************
+
     getAllPosts() {
-        let sql =
+        let sqlGetAllPosts =
             "SELECT posts.id, posts.userId, posts.title, posts.content, DATE_FORMAT(DATE(posts.date), '%d/%m/%Y') AS date, TIME(posts.date) AS time, posts.likes, users.lastName, users.firstName FROM posts JOIN users ON posts.userId = users.id ORDER BY posts.date DESC";
         return new Promise((resolve) => {
-            connectDb.query(sql, function (err, result, fields) {
+            connectDb.query(sqlGetAllPosts, function (err, result, fields) {
                 if (err) throw err;
                 resolve(result);
                 console.log(result);
@@ -17,10 +19,10 @@ class Posts {
     }
 
     createPost(sqlInserts) {
-        let sql = "INSERT INTO posts VALUES(NULL, ?, ?, ?, NOW(), 0)";
-        sql = mysql.format(sql, sqlInserts);
+        let sqlCreatePost = "INSERT INTO posts VALUES(NULL, ?, ?, ?, NOW(), 0)";
+        sqlCreatePost = mysql.format(sqlCreatePost, sqlInserts);
         return new Promise((resolve) => {
-            connectDb.query(sql, function (err, result, fields) {
+            connectDb.query(sqlCreatePost, function (err, result, fields) {
                 if (err) throw err;
                 resolve({ message: "Nouveau post créé" });
                 console.log(sqlInserts);
@@ -28,117 +30,52 @@ class Posts {
         });
     }
 
-    updatePost(sqlInserts1, sqlInserts2) {
-        let sql1 = "SELECT * FROM posts where id = ?";
-        sql1 = mysql.format(sql1, sqlInserts1);
-        console.log(sql1);
+    updatePost(sqlInsertPostId, sqlInserts) {
+        let sqlSelectAll = "SELECT * FROM posts where id = ?"; //on récupère toutes les données du post en fonction de son id
+        sqlSelectAll = mysql.format(sqlSelectAll, sqlInsertPostId);
+        console.log(sqlSelectAll);
         return new Promise((resolve, reject) => {
-            connectDb.query(sql1, function (err, result, fields) {
+            connectDb.query(sqlSelectAll, function (err, result, fields) {
                 if (err) throw err;
-                if (sqlInserts2[3] == result[0].userId) {
-                    let sql2 = "UPDATE posts SET title = ?, content = ? WHERE id = ? AND userId = ?";
-                    console.log(sqlInserts2[3]);
-                    sql2 = mysql.format(sql2, sqlInserts2);
-                    connectDb.query(sql2, function (err, result, fields) {
+                if (sqlInserts[3] == result[0].userId) {
+                    //on vérifie que le userId est bien celui contenu dans le token
+                    let sqlUpdatePost = "UPDATE posts SET title = ?, content = ? WHERE id = ? AND userId = ?"; //on met à jour les données modifiées
+                    console.log(sqlInserts[3]);
+                    sqlUpdatePost = mysql.format(sqlUpdatePost, sqlInserts);
+                    connectDb.query(sqlUpdatePost, function (err, result, fields) {
                         if (err) throw err;
                         resolve({ message: "Post mis à jour" });
                     });
                 } else {
-                    reject({ error: "Erreur" });
+                    reject({ error: "Impossible de mettre à jour le post" });
                 }
             });
         });
     }
 
-    deletePost(sqlInserts1, sqlInserts2) {
-        let sql1 = "SELECT * FROM posts where id = ?";
-        sql1 = mysql.format(sql1, sqlInserts1);
+    deletePost(sqlInsertPostId, sqlInserts) {
+        let sqlSelectAll = "SELECT * FROM posts where id = ?"; //on récupère toutes les données du post en fonction de son id
+        sqlSelectAll = mysql.format(sqlSelectAll, sqlInsertPostId);
+        console.log(sqlSelectAll);
         return new Promise((resolve, reject) => {
-            connectDb.query(sql1, function (err, result, fields) {
+            connectDb.query(sqlSelectAll, function (err, result, fields) {
                 if (err) throw err;
-                if (sqlInserts2[1] == result[0].userId) {
-                    let sql2 = "DELETE FROM posts WHERE id = ? AND userId = ?";
-                    sql2 = mysql.format(sql2, sqlInserts2);
-                    connectDb.query(sql2, function (err, result, fields) {
+                if (sqlInserts[1] == result[0].userId) {
+                    //on vérifie que le userId est bien celui contenu dans le token
+                    let sqlDeletePost = "DELETE FROM posts WHERE id = ? AND userId = ?"; //on supprime toutes les données
+                    sqlDeletePost = mysql.format(sqlDeletePost, sqlInserts);
+                    connectDb.query(sqlDeletePost, function (err, result, fields) {
                         if (err) throw err;
-                        resolve({ message: "Post supprimé !" });
+                        resolve({ message: "Post supprimé" });
                     });
                 } else {
-                    reject({ error: "Erreur" });
+                    reject({ error: "Impossible de supprimer le post" });
                 }
             });
         });
     }
+    //*************************************     LIKES     ***************************************************************************
 
-    // getComments(sqlInserts) {
-    //     let sql =
-    //         "SELECT comments.comContent, DATE_FORMAT(comments.date, '%d/%m/%Y à %H:%i:%s') AS date, comments.id, comments.userId, users.firstName, users.lastName FROM comments JOIN users on comments.userId = users.id WHERE postId = ? ORDER BY date";
-    //     sql = mysql.format(sql, sqlInserts);
-    //     return new Promise((resolve) => {
-    //         connectDb.query(sql, function (err, result, fields) {
-    //             if (err) throw err;
-    //             resolve(result);
-    //         });
-    //     });
-    // }
-    // createComment(sqlInserts) {
-    //     let sql = "INSERT INTO comments VALUES(NULL, ?, ?, NOW(), ?)";
-    //     sql = mysql.format(sql, sqlInserts);
-    //     return new Promise((resolve) => {
-    //         connectDb.query(sql, function (err, result, fields) {
-    //             if (err) throw err;
-    //             resolve({ message: "Nouveau commentaire !" });
-    //         });
-    //     });
-    // }
-    // updateComment(sqlInserts1, sqlInserts2) {
-    //     let sql1 = "SELECT * FROM comments where id = ?";
-    //     sql1 = mysql.format(sql1, sqlInserts1);
-    //     return new Promise((resolve) => {
-    //         connectDb.query(sql1, function (err, result, fields) {
-    //             if (err) throw err;
-    //             if (sqlInserts2[2] == result[0].userId) {
-    //                 let sql2 = "UPDATE comments SET comContent = ? WHERE id = ? AND userId = ?";
-    //                 sql2 = mysql.format(sql2, sqlInserts2);
-    //                 connectDb.query(sql2, function (err, result, fields) {
-    //                     if (err) throw err;
-    //                     resolve({ message: "Commentaire modifié !" });
-    //                 });
-    //             } else {
-    //                 reject({ error: "fonction indisponible" });
-    //             }
-    //         });
-    //     });
-    // }
-    // deleteComment(sqlInserts1, sqlInserts2) {
-    //     let sql1 = "SELECT * FROM comments where id = ?";
-    //     sql1 = mysql.format(sql1, sqlInserts1);
-    //     return new Promise((resolve, reject) => {
-    //         connectDb.query(sql1, function (err, result, fields) {
-    //             if (err) throw err;
-    //             if (sqlInserts2[1] == result[0].userId) {
-    //                 let sql2 = "DELETE FROM comments WHERE id = ? AND userId = ?";
-    //                 sql2 = mysql.format(sql2, sqlInserts2);
-    //                 connectDb.query(sql2, function (err, result, fields) {
-    //                     if (err) throw err;
-    //                     resolve({ message: "Commentaire supprimé !" });
-    //                 });
-    //             } else {
-    //                 reject({ error: "fonction indisponible" });
-    //             }
-    //         });
-    //     });
-    // }
-
-    // getAllLikes() {
-    //     let sql = "SELECT * FROM likes";
-    //     return new Promise((resolve) => {
-    //         connectDb.query(sql, function (err, result, fields) {
-    //             if (err) throw err;
-    //             resolve(result);
-    //         });
-    //     });
-    // }
     // postLike(sqlInserts1, sqlInserts2, liked) {
     //     let sql1 = "INSERT INTO likes VALUES (NULL, ?, ?)";
     //     sql1 = mysql.format(sql1, sqlInserts1);
@@ -164,6 +101,74 @@ class Posts {
     //         }
     //     });
     // }
+
+    //*************************************     COMMENTS     ***************************************************************************
+
+    getAllComments(sqlInserts) {
+        let sqlGetAllComments =
+            "SELECT comments.id, comments.userId, comments.postid, DATE_FORMAT(comments.date, '%d/%m/%Y à %H:%i:%s') AS date, comments.comContent, users.firstName, users.lastName FROM comments JOIN users on comments.userId = users.id ORDER BY date ";
+        sqlGetAllComments = mysql.format(sqlGetAllComments, sqlInserts);
+        return new Promise((resolve) => {
+            connectDb.query(sqlGetAllComments, function (err, result, fields) {
+                if (err) throw err;
+                resolve(result);
+                console.log(result);
+            });
+        });
+    }
+
+    createComment(sqlInserts) {
+        let sqlCreateComment = "INSERT INTO comments VALUES(NULL, ?, ?, NOW(), ?)";
+        sqlCreateComment = mysql.format(sqlCreateComment, sqlInserts);
+        return new Promise((resolve) => {
+            connectDb.query(sqlCreateComment, function (err, result, fields) {
+                if (err) throw err;
+                resolve({ message: "Nouveau commentaire créé" });
+            });
+        });
+    }
+
+    updateComment(sqlInsertCommentId, sqlInserts) {
+        let sqlSelectAll = "SELECT * FROM comments where id = ?";
+        sqlSelectAll = mysql.format(sqlSelectAll, sqlInsertCommentId);
+        console.log(sqlSelectAll);
+        return new Promise((resolve, reject) => {
+            connectDb.query(sqlSelectAll, function (err, result, fields) {
+                if (err) throw err;
+                if (sqlInserts[2] == result[0].userId) {
+                    let sqlUpdateComment = "UPDATE comments SET comContent = ? WHERE id = ? AND userId = ?";
+                    sqlUpdateComment = mysql.format(sqlUpdateComment, sqlInserts);
+                    connectDb.query(sqlUpdateComment, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ message: "Commentaire mis à jour " });
+                    });
+                } else {
+                    reject({ error: "Impossible de modifier le commentaire" });
+                }
+            });
+        });
+    }
+
+    deleteComment(sqlInsertCommentId, sqlInserts) {
+        let sqlSelectAll = "SELECT * FROM comments where id = ?";
+        sqlSelectAll = mysql.format(sqlSelectAll, sqlInsertCommentId);
+        console.log(sqlSelectAll);
+        return new Promise((resolve, reject) => {
+            connectDb.query(sqlSelectAll, function (err, result, fields) {
+                if (err) throw err;
+                if (sqlInserts[1] == result[0].userId) {
+                    let sqlDeleteComment = "DELETE FROM comments WHERE id = ? AND userId = ?";
+                    sqlDeleteComment = mysql.format(sqlDeleteComment, sqlInserts);
+                    connectDb.query(sqlDeleteComment, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ message: "Commentaire supprimé " });
+                    });
+                } else {
+                    reject({ error: "Impossible de supprimer le commentaire" });
+                }
+            });
+        });
+    }
 }
 
 module.exports = Posts;
