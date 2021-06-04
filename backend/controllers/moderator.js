@@ -12,7 +12,7 @@ exports.getAllPosts = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = jwt.verify(token, process.env.JWT_KEY);
     const moderation = decodedToken.moderation;
-    console.log(moderation);
+    console.log(moderation); //vérification que le user est bien le modérateur
     if (moderation == 1) {
         console.log(moderation);
         moderator.getAllPosts().then((response) => {
@@ -30,6 +30,7 @@ exports.deletePost = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_KEY);
     const moderation = decodedToken.moderation;
     console.log(moderation);
+    //vérification que le user est bien le modérateur
     if (moderation == 1) {
         console.log(moderation);
         let postId = req.params.id;
@@ -50,6 +51,7 @@ exports.getAllComments = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_KEY);
     const moderation = decodedToken.moderation;
     console.log(moderation);
+    //vérification que le user est bien le modérateur
     if (moderation == 1) {
         console.log(moderation);
         moderator.getAllComments().then((response) => {
@@ -67,6 +69,7 @@ exports.deleteComment = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_KEY);
     const moderation = decodedToken.moderation;
     console.log(moderation);
+    //vérification que le user est bien le modérateur
     if (moderation == 1) {
         console.log(moderation);
         let commentId = req.params.id;

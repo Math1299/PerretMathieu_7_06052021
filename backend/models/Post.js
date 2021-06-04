@@ -76,31 +76,37 @@ class Posts {
     }
     //*************************************     LIKES     ***************************************************************************
 
-    // postLike(sqlInserts1, sqlInserts2, liked) {
-    //     let sql1 = "INSERT INTO likes VALUES (NULL, ?, ?)";
-    //     sql1 = mysql.format(sql1, sqlInserts1);
-    //     let sql2 = "UPDATE posts SET likes = ? WHERE id = ?";
-    //     sql2 = mysql.format(sql2, sqlInserts2);
-    //     let sql3 = "DELETE FROM likes WHERE postId = ? AND userId = ?";
-    //     sql3 = mysql.format(sql3, sqlInserts1);
-    //     return new Promise((resolve) => {
-    //         connectDb.query(sql2, function (err, result, fields) {
-    //             if (err) throw err;
-    //         });
-    //         if (liked === false) {
-    //             connectDb.query(sql1, function (err, result, fields) {
-    //                 if (err) throw err;
-    //                 resolve({ message: "Like !" });
-    //             });
-    //         }
-    //         if (liked === true) {
-    //             connectDb.query(sql3, function (err, result, fields) {
-    //                 if (err) throw err;
-    //                 resolve({ message: "Like annulé!" });
-    //             });
-    //         }
-    //     });
-    // }
+    createLike(sqlWhereToLike, sqlAddLike, liked) {
+        let sqlInsertLikes = "INSERT INTO likes VALUES (NULL, ?, ?)";
+        sqlInsertLikes = mysql.format(sqlInsertLikes, sqlWhereToLike);
+        console.log(sqlInsertLikes);
+
+        let sqlUpdateLikes = "UPDATE posts SET likes = ? WHERE id = ?";
+        sqlUpdateLikes = mysql.format(sqlUpdateLikes, sqlAddLike);
+        console.log(sqlUpdateLikes);
+
+        let sqlDeleteLikes = "DELETE FROM likes WHERE postId = ? AND userId = ?";
+        sqlDeleteLikes = mysql.format(sqlDeleteLikes, sqlWhereToLike);
+        console.log(sqlDeleteLikes);
+
+        return new Promise((resolve) => {
+            connectDb.query(sqlUpdateLikes, function (err, result, fields) {
+                if (err) throw err;
+            });
+            if (liked === false) {
+                connectDb.query(sqlInsertLikes, function (err, result, fields) {
+                    if (err) throw err;
+                    resolve({ message: "Like !" });
+                });
+            }
+            if (liked === true) {
+                connectDb.query(sqlDeleteLikes, function (err, result, fields) {
+                    if (err) throw err;
+                    resolve({ message: "Like annulé!" });
+                });
+            }
+        });
+    }
 
     //*************************************     COMMENTS     ***************************************************************************
 

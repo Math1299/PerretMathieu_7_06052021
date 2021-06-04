@@ -19,7 +19,7 @@ try {
 
     //LIKES
 
-    // router.get("/:id/like", auth, postsCtrl.createLike);
+    router.get("/:id/like", auth, postsCtrl.createLike); //localhost:5000/api/post/93/update           93=id de la table posts
     // router.get("/likes", auth, postsCtrl.getAllLikes);
 
     //COMMENTS

@@ -83,9 +83,20 @@ exports.deletePost = (req, res, next) => {
 //********************************************   LIKE   ******************************************************************* */
 
 //middleware pour ajouter un like
-// exports.createLike = (req,res,next) => {
-//     let
-// }
+
+exports.createLike = (req, res, next) => {
+    let userId = req.body.userId;
+    let likes = req.body.likes;
+    let postId = req.body.postId;
+    let sqlWhereToLike = [postId, userId];
+    let sqlAddLike = [likes, postId];
+    console.log(sqlWhereToLike);
+    console.log(sqlAddLike);
+    posts.createLike(sqlWhereToLike, sqlAddLike, req.body.liked).then((response) => {
+        console.log(createLike);
+        res.status(201).json(JSON.stringify(response));
+    });
+};
 
 //********************************************   COMMENTS   ******************************************************************* */
 
