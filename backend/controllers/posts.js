@@ -4,7 +4,7 @@ require("dotenv").config({ path: "./config/.env" }); //indique le chemin pour la
 const Posts = require("../models/Post");
 let posts = new Posts();
 
-//********************************************POSTS******************************************************************* */
+//********************************************   POSTS   ******************************************************************* */
 
 //middleware pour récupérer tous les posts des utilisateurs
 
@@ -80,10 +80,14 @@ exports.deletePost = (req, res, next) => {
         });
 };
 
+//********************************************   LIKE   ******************************************************************* */
+
 //middleware pour ajouter un like
 // exports.createLike = (req,res,next) => {
 //     let
 // }
+
+//********************************************   COMMENTS   ******************************************************************* */
 
 //middleware pour récupérer tous les COMMENTS
 

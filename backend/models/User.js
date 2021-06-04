@@ -17,7 +17,7 @@ class User {
         });
     }
     login(sqlInserts, password) {
-        let sqlLogin = "SELECT id, password FROM users WHERE email = ?"; //recherche dans la bdd en fonction de l'email rentré
+        let sqlLogin = "SELECT * FROM users WHERE email = ?"; //recherche dans la bdd en fonction de l'email rentré
         sqlLogin = mysql.format(sqlLogin, sqlInserts);
         console.log(sqlLogin);
         return new Promise((resolve, reject) => {
@@ -37,6 +37,7 @@ class User {
                                 moderation: result[0].moderation,
                                 message: "Utilisateur connecté",
                             });
+                            console.log(moderation);
                         })
 
                         .catch((error) => reject({ error }));

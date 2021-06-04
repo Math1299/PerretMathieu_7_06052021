@@ -25,7 +25,7 @@ try {
     //COMMENTS
 
     router.get("/comments", auth, postsCtrl.getAllComments); //localhost:5000/api/post/comments
-    router.post("/:id/comment", auth, postsCtrl.createComment); //localhost:5000/api/post/93/comments                    93=postId  ou id de la table posts
+    router.post("/:id/comment", auth, postsCtrl.createComment); //localhost:5000/api/post/93/comments                    93=id de la table posts
     router.put("/:id/updateComment", auth, postsCtrl.updateComment); //localhost:5000/api/post/79/updateComment          79=id de la table comments
     router.delete("/:id/deleteComment", auth, postsCtrl.deleteComment); //localhost:5000/api/post/92/deleteComment       92=id de la table comments
 } catch (error) {

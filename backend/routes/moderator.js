@@ -10,11 +10,11 @@ const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
 try {
-    router.get("/comments", auth, moderatorCtrl.getAllComments);
-    router.delete("/comment/:id", auth, moderatorCtrl.deleteComment);
+    router.get("/post", auth, moderatorCtrl.getAllPosts); //localhost:5000/api/moderator/post
+    router.delete("/post/:id", auth, moderatorCtrl.deletePost); //localhost:5000/api/moderator/post/93    93= id table posts
 
-    router.get("/posts", auth, moderatorCtrl.getAllPosts);
-    router.delete("/post/:id", auth, moderatorCtrl.deletePost);
+    router.get("/comment", auth, moderatorCtrl.getAllComments); //localhost:5000/api/moderator/comment
+    router.delete("/comment/:id", auth, moderatorCtrl.deleteComment);
 } catch (error) {
     console.log(error);
 }
